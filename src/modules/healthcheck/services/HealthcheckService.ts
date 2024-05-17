@@ -1,8 +1,13 @@
+import healthCheck from "../../../shared/container/providers/visa/healthCheck";
+
 class HealthCheckService {
     static async check(): Promise<Object> {
-        return {
-            check: true
-        };
+        try {
+            const response = await healthCheck({});
+            return response;
+        } catch (error) {
+            return false;
+        }
     }
 }
 
