@@ -11,7 +11,7 @@ const hmac = (secretKey: string, data: string) => {
 const generateXPayToken = () => {
     const APIKey = process.env.API_KEY || '';
     const sharedSecret = process.env.SHARED_SECRET || '';
-    const URI = "helloworld";
+    const URI = "reports/v1/transactiondata";
     const QS = "apikey=" + APIKey;
     const timeStampUTC = Math.floor(Date.now() / 1000).toString();
     const payload = "";

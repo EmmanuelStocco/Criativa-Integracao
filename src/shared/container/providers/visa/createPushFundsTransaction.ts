@@ -2,9 +2,11 @@ import client from './client';
 
 async function pushFunds(data: any): Promise<any> {
     try {
-        const response = await client.post('/visadirect/fundstransfer/v1/pushfundstransactions', data);
+        const response = await client.post(`/visadirect/fundstransfer/v1/pushfundstransactions?apikey=${process.env.API_KEY}`, data);
+        console.log(response);
         return response.data;
     } catch (error: any) {
+        console.log(error, 'erro na aplicação');
         if (error.response && error.response.data) {
             const errorObject = {
                 status: error.response.data.responseStatus.status,
