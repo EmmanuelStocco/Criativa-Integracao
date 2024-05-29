@@ -3,7 +3,7 @@ import client from './client';
 
 async function pushFunds(data: any): Promise<any> {
 	try {
-		const xPayToken = generateXPayToken(data);
+		const xPayToken = generateXPayToken(data, 'fundstransfer/v1/pushfundstransactions');
 		const response = await client.post(`/visadirect/fundstransfer/v1/pushfundstransactions?apikey=${process.env.API_KEY}`, data, {
 			headers: {
 				'x-pay-token': xPayToken,
