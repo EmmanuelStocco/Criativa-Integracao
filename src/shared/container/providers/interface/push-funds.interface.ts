@@ -9,10 +9,10 @@ interface ServiceProcessingType {
 }
 
 interface CardAcceptorAddress {
-    country: string;
-    zipCode: string;
-    county: string;
-    state: string;
+    country: string; // Entradas válidas (exemplo para EUA entre colchetes []) Código de país ISO (2 letras) [exemplo: "US"] Código de país ISO (3 letras) [exemplo: "USA"] Código de país ISO (3 números) [exemplo: "840"].
+    zipCode: string; // Código Postal do Comerciante/Originador. Necessário se o endereço do cardAcceptor:country for "US" ou "CA", para todas as transações internacionais quando o emissor estiver no Canadá ou na Austrália, e para todas as transações MasterCard. Nota: Para "US", "CA", e territórios dos EUA (Porto Rico/Guam/Ilhas Virgens dos EUA/Samoa Americana/Ilha Mariana do Norte), o comprimento máximo do campo é de 9 caracteres. Para o resto dos países, o comprimento máximo do campo é de 8 caracteres.
+    county: string; // Deve ser o condado do Comerciante/Originador. Necessário se o endereço do cardAcceptor:country for "US".
+    state: string; // Estado ou província do Comerciante/Originador. Necessário se o endereço do cardAcceptor:country for "US" ou "CA", para todas as transações internacionais quando o emissor estiver no Canadá ou na Austrália, e para todas as transações MasterCard. Nota: Para "US" ou "CA", este campo pode conter o nome completo do estado ou o código de 2 caracteres do estado. Para o resto dos países, se aplicável, o campo contém o código do estado com um comprimento máximo de 6 caracteres.
 }
 
 interface CardAcceptor {
@@ -24,31 +24,31 @@ interface CardAcceptor {
 
 export default interface TransactionData {
     surcharge?: string; // Sobretaxa do remetente conforme avaliada pelo originador
-    senderAddress?: string; // Endereço do doador até 35 caracteres
+    senderAddress?: string; // Endereço do remetente até 35 caracteres
     pointOfServiceData?: PointOfServiceData;
-    recipientPrimaryAccountNumber: string;
-    transactionIdentifier: string;
+    recipientPrimaryAccountNumber: string; // Este é um PAN ou token de 16 dígitos para a conta do destinatário do pagamento. Condicional. Apenas um de 'recipientPrimaryAccountNumber' e 'recipientPaymentCredentialReference' é fornecido em uma solicitação. string [13 .. 19] caracteres
+    transactionIdentifier: string; // Número <int64> Condicional. O identificador da transação VisaNet. Se você enviou anteriormente um AFT, este campo deve incluir o identificador da transação VisaNet retornado na resposta AFT. Para reembolsos mais rápidos OCTs, os clientes são obrigados a incluir o ID da Transação Visa da transação de compra original.
     serviceProcessingType?: ServiceProcessingType;
-    acquiringBin?: string;
-    retrievalReferenceNumber: string;
-    systemsTraceAuditNumber: string;
-    senderName: string;
-    businessApplicationId: string;
+    acquiringBin?: string; // O Número de Identificação Bancária (BIN) sob o qual a solução Visa Direct está registrada. Isso deve corresponder às informações fornecidas durante o cadastro.
+    retrievalReferenceNumber: string; // string 12 caracteres. Um valor usado para relacionar chamadas de serviço relacionadas a uma única transação financeira. Ao passar Account Funding Transaction (AFT) e métodos Original Credit Transaction (OCT), este valor deve ser diferente entre os dois métodos. Ao passar o método Account Funding Transaction Reversal (AFTR), este valor deve corresponder ao retrievalReferenceNumber anteriormente passado com o método AFT para esta transação. Formato recomendado: ydddhhnnnnnn. Os quatro primeiros dígitos devem ser uma data yddd válida no formato de data juliana, onde o primeiro dígito = 0-9 (último dígito do ano atual) e os próximos três dígitos = 001-366 (número do dia do ano). hh pode ser a hora de dois dígitos em um relógio de 24 horas (00-23) durante a qual a transação é realizada. nnnnnn pode ser o systemsTraceAuditNumber ou qualquer número de 6 dígitos.
+    systemsTraceAuditNumber: string; // Número. Um valor exclusivo deve ser usado para cada método de API. No entanto, ao passar o método (AFTR), este valor deve corresponder ao systemsTraceAuditNumber anteriormente passado com o método AFT para a transação atual.
+    senderName: string; // Não use este campo para transações não Visa e para transações domésticas na Colômbia. Use senderFirstName, senderLastName & senderMiddleName em vez disso. Se a transação for uma liberação de fundos, forneça o nome do comerciante ou entidade governamental que está enviando os fundos. Se a transação for uma carga pré-paga ou pagamento de fatura de cartão de crédito e doméstica nos EUA, forneça o nome do titular do cartão. Formato recomendado: Sobrenome 1 + Espaço + Sobrenome 2 (opcional) + Espaço + Primeiro Nome + Espaço + Inicial do Meio ou Nome do Meio (opcional) + espaço. Exemplo: Doe John A
+    businessApplicationId: string; // Identifica o tipo de aplicação comercial do programa para processamento de transações VisaNet. Para Transferência de Dinheiro, AA se aplica a transações onde o remetente e o destinatário são a mesma pessoa e PP se aplica a transações onde o remetente e o destinatário não são a mesma pessoa. Para Transferência de Dinheiro, CD (Depósito em Dinheiro) se aplica a transações financiadas em dinheiro. Para transações de compra domésticas na Argentina, o valor deve ser "PS". Para Pedido de Pagamento, city carregará o Id da Fatura que será usado para o caso de uso C2B na região CEMEA onde o beneficiário inicia o OCT para o pagador. Consulte os códigos businessApplicationId. Exemplo: "AA"
     settlementServiceIndicator: string;
-    transactionCurrencyCode: string;
-    recipientName: string;
-    sourceAmount: string;
-    senderCountryCode: string;
-    senderAccountNumber: string;
-    amount: string;
-    localTransactionDateTime: string;
-    purposeOfPayment: string;
+    transactionCurrencyCode: string; // Use um código de moeda de 3 caracteres alfabéticos ou numéricos para a moeda do remetente. Você deve usar o billingCurrencyCode obtido da API de Consulta de Atributos de Transferência de Fundos na Consulta de Atributos da Conta de Pagamento. Exemplo: "USD"
+    recipientName: string; // Não use este campo para transações não Visa e para transações domésticas na Colômbia. Use recipientFirstName, recipientLastName & recipientMiddleName em vez disso. Este campo contém o nome do destinatário e é necessário para transferência de dinheiro internacional aprimorada feita com cartões Visa. Formato recomendado: Sobrenome 1 + Espaço + Sobrenome 2 (opcional) + Espaço + Primeiro Nome + Espaço + Inicial do Meio ou Nome do Meio (opcional) + espaço. Exemplo: Doe John A
+    sourceAmount: string; // O valor de origem é necessário em certos mercados para identificar o valor da transação inserido no código da moeda do remetente antes da conversão FX pela entidade originadora.
+    senderCountryCode: string; // Se a transação for uma transferência de dinheiro e internacional ou doméstica nos EUA, este campo deve conter o código do país do remetente. Se a transação for uma liberação de fundos e internacional ou doméstica nos EUA, este campo deve conter o código do país do comerciante ou entidade governamental que está enviando a liberação de fundos. Se a transação for uma carga pré-paga ou pagamento de fatura de cartão de crédito e doméstica nos EUA, este campo deve conter o código do país do remetente. O código do país alfa ou numérico pode ser suportado. Este campo é necessário ao enviar transações para algumas das redes de débito dos EUA e para transações domésticas na Colômbia.
+    senderAccountNumber: string; // Se a transação for uma transferência de dinheiro e internacional ou doméstica nos EUA, este campo deve conter o código do país do remetente. Se a transação for uma liberação de fundos e internacional ou doméstica nos EUA, este campo deve conter o código do país do comerciante ou entidade governamental que está enviando a liberação de fundos. Se a transação for uma carga pré-paga ou pagamento de fatura de cartão de crédito e doméstica nos EUA, este campo deve conter o código do país do remetente. O código do país alfa ou numérico pode ser suportado. Este campo é necessário ao enviar transações para algumas das redes de débito dos EUA e para transações domésticas na Colômbia.
+    amount: string; // O valor da transação a ser entregue ao destinatário. Formato: Valor Mínimo: 0 Valor Máximo: 999999999.999 Dígitos fracionários permitidos: 3. Nota: Se uma moeda tiver três casas decimais, o último dígito deste campo deve ser zero.
+    localTransactionDateTime: string; // Este campo contém a data e hora local quando a transação é submetida por um comerciante, provedor de serviços ou adquirente. Formato: YYYY-MM-DDThh:mm:ss. Exemplo: 2011-12-30T21:32:52
+    purposeOfPayment: string; // Este é um valor alfanumérico. O propósito do pagamento é necessário em certos mercados para identificar claramente o propósito do pagamento com base nos valores padrão definidos para o respectivo mercado. Para Índia, Bangladesh, Egito e Argentina - o propósito do pagamento é obrigatório para todos os BAIs, exceto CO, CI e MP. Para Chile - o propósito do pagamento é obrigatório para BAI-FD. Para Colômbia - o propósito do pagamento é obrigatório para BAI-AA e PP.
     cardAcceptor: CardAcceptor;
-    senderReference: string;
-    acquirerCountryCode: string;
-    sourceCurrencyCode: string;
-    senderCity: string;
-    senderStateCode: string;
-    merchantCategoryCode: string;
-    sourceOfFundsCode: string;
+    senderReference: string; // Obrigatório, se a transação for uma transferência de dinheiro, carga pré-paga ou pagamento de fatura de cartão de crédito, e se o remetente pretender financiar a transação com um instrumento não financeiro (por exemplo, dinheiro), um número de referência exclusivo para o remetente é necessário. Obrigatório, se a transação for uma liberação de fundos, o campo é obrigatório. Obrigatório, se a transação for roteada para redes STAR via Visa Push Payments Gateway Service. Se este campo for enviado e a transação não for roteada pela STAR, o campo ainda será enviado para outras redes como um campo opcional. Este campo é obrigatório se senderAccountNumber não for enviado.
+    acquirerCountryCode: string; // Use um código de país de 3 dígitos numéricos para o país do BIN sob o qual sua solução Visa Direct está registrada. Isso deve corresponder às informações fornecidas durante o cadastro do programa. Consulte os códigos ISO.
+    sourceCurrencyCode: string; // Condicional. Código de moeda de 3 caracteres alfabéticos ou numéricos para a moeda do campo sourceAmount.
+    senderCity: string; // Se a transação for uma transferência de dinheiro e internacional ou doméstica nos EUA, este campo deve conter a cidade do remetente. Se a transação for uma liberação de fundos e internacional ou doméstica nos EUA, este campo deve conter a cidade do comerciante ou entidade governamental que está enviando a liberação de fundos. Se a transação for uma carga pré-paga ou pagamento de fatura de cartão de crédito e doméstica nos EUA, este campo deve conter a cidade do remetente. Este campo também é necessário para transações domésticas na Colômbia.
+    senderStateCode: string; // Necessário se senderCountryCode for 124 (CAN) ou 840 (EUA).
+    merchantCategoryCode: string; // Se fornecido, o valor substitui o presente nos dados de integração. Se o valor merchantCategoryCode não estiver preenchido nos dados de integração, este campo é obrigatório.
+    sourceOfFundsCode: string; // Se a transação for uma transferência de dinheiro, o campo é necessário e deve conter um código sourceOfFundsCode válido que corresponda ao instrumento de financiamento. Se a transação for uma liberação de fundos, o campo é necessário e provavelmente contém um "05" como o código sourceOfFundsCode para identificar que o comerciante ou entidade governamental usou uma conta de depósito para financiar a liberação. Se a transação for uma carga pré-paga, o campo é necessário se a transação não for doméstica nos EUA. Se a transação for um pagamento de fatura de cartão de crédito, o campo é necessário se a transação não for doméstica nos EUA, e o código sourceOfFundsCode não deve conter "01" ou "06".
 }
