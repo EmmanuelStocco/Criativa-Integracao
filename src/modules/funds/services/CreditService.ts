@@ -46,7 +46,7 @@ class CreditService {
         try {
             const configObject = new Configuration();
             const apiClient = new cybersourceRestApi.ApiClient();
-            const requestObj = new cybersourceRestApi.CreateCreditRequest();
+            const requestObj = new cybersourceRestApi.CreatePaymentRequest();
 
             const clientReferenceInformation = new cybersourceRestApi.Ptsv2paymentsClientReferenceInformation();
             clientReferenceInformation.code = data.clientReferenceInformation.code;
@@ -81,10 +81,10 @@ class CreditService {
 
             requestObj.orderInformation = orderInformation;
 
-            const instance = new cybersourceRestApi.CreditApi(configObject, apiClient);
+            const instance = new cybersourceRestApi.PaymentsApi(configObject, apiClient);
 
             return new Promise((resolve, reject) => {
-                instance.createCredit(requestObj, (error: any, data: any, response: any) => {
+                instance.createPayment(requestObj, (error: any, data: any, response: any) => {
                     if (error) {
                         console.error('\nError : ' + JSON.stringify(error));
                         return reject(error);
@@ -103,3 +103,37 @@ class CreditService {
 }
 
 export { CreditService };
+
+
+
+// type
+// Type string
+// Three-digit value that indicates the card type.
+
+// IMPORTANT It is strongly recommended that you include the card type field in request messages even if it is
+// optional for your processor and card type. Omitting the card type can cause the transaction to be processed with the wrong card type.
+
+// Possible values:
+
+// 001: Visa. For card-present transactions on all processors except SIX, the Visa Electron card type is processed the same way that the Visa debit card is processed. Use card type value 001 for Visa Electron.
+// 002: Mastercard, Eurocard[^1], which is a European regional brand of Mastercard.
+// 003: American Express
+// 004: Discover
+// 005: Diners Club
+// 006: Carte Blanche[^1]
+// 007: JCB[^1]
+// 014: Enroute[^1]
+// 021: JAL[^1]
+// 024: Maestro (UK Domestic)[^1]
+// 031: Delta[^1]: Use this value only for Ingenico ePayments. For other processors, use 001 for all Visa card types.
+// 033: Visa Electron[^1]. Use this value only for Ingenico ePayments and SIX. For other processors, use 001 for all Visa card types.
+// 034: Dankort[^1]
+// 036: Cartes Bancaires[^1,4]
+// 037: Carta Si[^1]
+// 039: Encoded account number[^1]
+// 040: UATP[^1]
+// 042: Maestro (International)[^1]
+// 050: Hipercard[^2,3]
+// 051: Aura
+// 054: Elo[^3]
+// 062: China UnionPay
