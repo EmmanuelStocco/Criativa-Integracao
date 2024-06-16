@@ -31,8 +31,8 @@ class FundsController {
 
             return res.status(200).json(response);
         } catch (error: any) {
-            console.error(error);
-            return res.status(500).json({ message: "Erro ao processar a solicitação.", detailsError: error.message });
+            console.error(error, 'here');
+            return res.status(500).json({ message: "Erro ao processar a solicitação.", detailsError: error });
         }
     }
 }

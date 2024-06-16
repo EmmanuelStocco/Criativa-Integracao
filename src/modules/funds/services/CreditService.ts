@@ -1,6 +1,6 @@
 // @ts-ignore
 import * as cybersourceRestApi from 'cybersource-rest-client';
-import path from 'path';
+import CreateCreditRequest from '../interfaces/credit.interface';
 
 // Configuration module
 const AuthenticationType = 'http_signature';
@@ -29,13 +29,6 @@ class Configuration {
             'merchantID': MerchantId,
             'merchantKeyId': MerchantKeyId,
             'merchantsecretKey': MerchantSecretKey,
-            'keyAlias': KeyAlias,
-            'keyPass': KeyPass,
-            'keyFileName': KeyFileName,
-            'keysDirectory': KeysDirectory,
-            'useMetaKey': UseMetaKey,
-            'portfolioID': PortfolioID,
-            'pemFileDirectory': PemFileDirectory,
             'logConfiguration': {
                 'enableLog': EnableLog,
                 'logFileName': LogFileName,
@@ -49,41 +42,41 @@ class Configuration {
 }
 
 class CreditService {
-    static async creditPay(data: any): Promise<any> {
+    static async creditPay(data: CreateCreditRequest): Promise<any> {
         try {
             const configObject = new Configuration();
             const apiClient = new cybersourceRestApi.ApiClient();
             const requestObj = new cybersourceRestApi.CreateCreditRequest();
 
             const clientReferenceInformation = new cybersourceRestApi.Ptsv2paymentsClientReferenceInformation();
-            clientReferenceInformation.code = data.clientReferenceInformation?.code || '12345678';
+            clientReferenceInformation.code = data.clientReferenceInformation.code;
             requestObj.clientReferenceInformation = clientReferenceInformation;
 
             const paymentInformation = new cybersourceRestApi.Ptsv2paymentsidrefundsPaymentInformation();
             const paymentInformationCard = new cybersourceRestApi.Ptsv2paymentsidrefundsPaymentInformationCard();
-            paymentInformationCard.number = data.paymentInformation?.card?.number || '4111111111111111';
-            paymentInformationCard.expirationMonth = data.paymentInformation?.card?.expirationMonth || '03';
-            paymentInformationCard.expirationYear = data.paymentInformation?.card?.expirationYear || '2031';
-            paymentInformationCard.type = data.paymentInformation?.card?.type || '001';
+            paymentInformationCard.number = data.paymentInformation.card.number;
+            paymentInformationCard.expirationMonth = data.paymentInformation.card.expirationMonth;
+            paymentInformationCard.expirationYear = data.paymentInformation.card.expirationYear;
+            paymentInformationCard.type = data.paymentInformation.card.type;
             paymentInformation.card = paymentInformationCard;
             requestObj.paymentInformation = paymentInformation;
 
             const orderInformation = new cybersourceRestApi.Ptsv2paymentsidrefundsOrderInformation();
             const orderInformationAmountDetails = new cybersourceRestApi.Ptsv2paymentsidcapturesOrderInformationAmountDetails();
-            orderInformationAmountDetails.totalAmount = data.orderInformation?.amountDetails?.totalAmount || '200';
-            orderInformationAmountDetails.currency = data.orderInformation?.amountDetails?.currency || 'usd';
+            orderInformationAmountDetails.totalAmount = data.orderInformation.amountDetails.totalAmount;
+            orderInformationAmountDetails.currency = data.orderInformation.amountDetails.currency;
             orderInformation.amountDetails = orderInformationAmountDetails;
 
             const orderInformationBillTo = new cybersourceRestApi.Ptsv2paymentsidcapturesOrderInformationBillTo();
-            orderInformationBillTo.firstName = data.orderInformation?.billTo?.firstName || 'John';
-            orderInformationBillTo.lastName = data.orderInformation?.billTo?.lastName || 'Deo';
-            orderInformationBillTo.address1 = data.orderInformation?.billTo?.address1 || '900 Metro Center Blvd';
-            orderInformationBillTo.locality = data.orderInformation?.billTo?.locality || 'Foster City';
-            orderInformationBillTo.administrativeArea = data.orderInformation?.billTo?.administrativeArea || 'CA';
-            orderInformationBillTo.postalCode = data.orderInformation?.billTo?.postalCode || '48104-2201';
-            orderInformationBillTo.country = data.orderInformation?.billTo?.country || 'US';
-            orderInformationBillTo.email = data.orderInformation?.billTo?.email || 'test@cybs.com';
-            orderInformationBillTo.phoneNumber = data.orderInformation?.billTo?.phoneNumber || '9321499232';
+            orderInformationBillTo.firstName = data.orderInformation.billTo.firstName;
+            orderInformationBillTo.lastName = data.orderInformation.billTo.lastName;
+            orderInformationBillTo.address1 = data.orderInformation.billTo.address1;
+            orderInformationBillTo.locality = data.orderInformation.billTo.locality;
+            orderInformationBillTo.administrativeArea = data.orderInformation.billTo.administrativeArea;
+            orderInformationBillTo.postalCode = data.orderInformation.billTo.postalCode;
+            orderInformationBillTo.country = data.orderInformation.billTo.country;
+            orderInformationBillTo.email = data.orderInformation.billTo.email;
+            orderInformationBillTo.phoneNumber = data.orderInformation.billTo.phoneNumber;
             orderInformation.billTo = orderInformationBillTo;
 
             requestObj.orderInformation = orderInformation;
@@ -104,7 +97,7 @@ class CreditService {
             });
         } catch (error: any) {
             console.error('\nException on calling the API : ' + error);
-            return Promise.reject(error);
+            return error;
         }
     }
 }
