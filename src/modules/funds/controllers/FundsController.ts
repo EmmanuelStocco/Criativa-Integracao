@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { FundsService } from "../services/FundsService";
 import { createPushRequest } from "../interfaces/funds.interface";
 import { CreditService } from "../services/CreditService";
+import { PayPalService } from "../services/PayPalService";
 
 class FundsController {
     static async createPushFundsTransaction(req: Request, res: Response) {
@@ -28,6 +29,18 @@ class FundsController {
             if (response.status && response.status !== 200) {
                 return res.status(500).json({ message: "Erro ao processar a solicitação.", detailsError: response });
             }
+
+            return res.status(200).json(response);
+        } catch (error: any) {
+            console.error(error, 'here');
+            return res.status(500).json({ message: "Erro ao processar a solicitação.", detailsError: error });
+        }
+    }
+
+    static async paypal(req: Request, res: Response) {
+        try {
+            const data: any = req.body;
+            const response = await PayPalService.payment(data);
 
             return res.status(200).json(response);
         } catch (error: any) {

@@ -16,6 +16,8 @@ interface PaymentInformation {
 interface OrderInformationAmountDetails {
     totalAmount: string;
     currency: string;
+    originalAmount: string;
+    originalCurrency: string;
 }
 
 interface OrderInformationBillTo {

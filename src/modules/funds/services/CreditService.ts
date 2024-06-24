@@ -65,6 +65,8 @@ class CreditService {
             const orderInformationAmountDetails = new cybersourceRestApi.Ptsv2paymentsidcapturesOrderInformationAmountDetails();
             orderInformationAmountDetails.totalAmount = data.orderInformation.amountDetails.totalAmount;
             orderInformationAmountDetails.currency = data.orderInformation.amountDetails.currency;
+			orderInformationAmountDetails.originalAmount = data.orderInformation.amountDetails.originalAmount;
+			orderInformationAmountDetails.originalCurrency = data.orderInformation.amountDetails.originalCurrency;
             orderInformation.amountDetails = orderInformationAmountDetails;
 
             const orderInformationBillTo = new cybersourceRestApi.Ptsv2paymentsidcapturesOrderInformationBillTo();
