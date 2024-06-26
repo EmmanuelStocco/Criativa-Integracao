@@ -37,10 +37,22 @@ class FundsController {
         }
     }
 
-    static async paypal(req: Request, res: Response) {
+    static async createOrderPaypal(req: Request, res: Response) {
         try {
             const data: any = req.body;
-            const response = await PayPalService.payment(data);
+            const response = await PayPalService.createOrder(data);
+
+            return res.status(200).json(response);
+        } catch (error: any) {
+            console.error(error, 'here');
+            return res.status(500).json({ message: "Erro ao processar a solicitação.", detailsError: error });
+        }
+    }
+
+    static async capturePayment(req: Request, res: Response) {
+        try {
+            const data: any = req.body;
+            const response = await PayPalService.capturePayment(data);
 
             return res.status(200).json(response);
         } catch (error: any) {

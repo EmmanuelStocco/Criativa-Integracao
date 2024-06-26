@@ -5,6 +5,7 @@ const router: Router = express.Router();
 //
 router.post('/', FundsController.createPushFundsTransaction);
 router.post('/credit', FundsController.creditPay);
-router.post('/paypal', FundsController.paypal);
+router.post('/paypal/createOrder', FundsController.createOrderPaypal);
+router.post('/paypal/capturePayment', FundsController.capturePayment);
 
 export default router;
